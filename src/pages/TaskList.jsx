@@ -1,6 +1,7 @@
 import React from 'react'
 import { useContext } from 'react';
 import { GlobalContext } from '../context/GlobalContext';
+import TaskRow from '../components/TaskRow';
 
 
 const TaskList = () => {
@@ -11,6 +12,20 @@ const TaskList = () => {
   return (
     <div>
       <h1>Questa Pagina mostra la lista delle task</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Status</th>
+            <th>Data Creazione</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tasks.map(task => (
+            <TaskRow key={task.id} task={task} />
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }
