@@ -12,7 +12,7 @@ const Modal = ({ title, content, show, onClose, onConfirm, confirmText = "Confer
         {content}
         <div className='modal-actions'>
           <button onClick={onClose}>Annulla</button>
-          <button onClick={onConfirm}>Conferma</button>
+          <button onClick={onConfirm}>{confirmText}</button>
         </div>
 
       </div>

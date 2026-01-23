@@ -21,7 +21,7 @@ const useTasks = () => {
       method: 'POST',
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newTask)
-    })
+    });
     const { success, message, task } = await response.json();
     if (!success) throw new Error(message);
 
@@ -39,8 +39,16 @@ const useTasks = () => {
     )
   }
 
-  const updateTask = (taskId) => {
+  const updateTask = async updateTask => {
+    const response = await fetch(`${VITE_URL_API}/tasks/${updateTask.id}`, {
+      method: 'PUT',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updateTask)
+    });
+    const { success, message, task } = await response.json();
+    if (!success) throw new Error(message);
 
+    setTasks(prev => prev.map(t => t.id === task.id ? task : t))
   }
 
 
