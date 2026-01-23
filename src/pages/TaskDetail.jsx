@@ -1,7 +1,9 @@
 import React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { GlobalContext } from '../context/GlobalContext'
+import Modal from '../components/Modal'
+
 
 const TaskDetail = () => {
 
@@ -12,6 +14,8 @@ const TaskDetail = () => {
   const { tasks, removeTask } = useContext(GlobalContext);
 
   const task = tasks.find(t => t.id === parseInt(id));
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
 
   if (!task) {
     return (
@@ -37,7 +41,16 @@ const TaskDetail = () => {
       <p>{task.description}</p>
       <p>{task.status}</p>
       <p>{new Date(task.createdAt).toLocaleDateString()}</p>
-      <button onClick={handleDelete}>elimina Task</button>
+      <button onClick={() => setShowDeleteModal(true)}>elimina Task</button>
+
+      <Modal
+        title="Conferma Eliminazione"
+        content={<p>Sei sicuro di voler eliminare questa Task=</p>}
+        show={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        confirmText='Elimina'
+      />
     </div>
   )
 }

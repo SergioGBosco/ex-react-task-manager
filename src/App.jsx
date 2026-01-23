@@ -3,6 +3,7 @@ import TaskList from "./pages/TaskList"
 import AddTask from "./pages/AddTask"
 import { GlobalProvider } from "./context/GlobalContext"
 import TaskDetail from "./pages/TaskDetail"
+import './styles.css'
 function App() {
 
 
