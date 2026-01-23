@@ -1,7 +1,18 @@
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useContext } from 'react';
 import { GlobalContext } from '../context/GlobalContext';
 import TaskRow from '../components/TaskRow';
+
+
+function debounce(callback, delay) {
+  let timer;
+  return (value) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      callback(value);
+    }, delay)
+  }
+}
 
 
 const TaskList = () => {
@@ -11,7 +22,13 @@ const TaskList = () => {
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState(1);
 
+
+  const [searchQuery, setSearchQuery] = useState("")
+  const debounceSearch = useCallback(debounce(setSearchQuery, 500), [])
+
   const sortIcon = sortOrder === 1 ? "↓" : "↑";
+
+
 
 
   const handleSort = (field) => {
@@ -23,30 +40,39 @@ const TaskList = () => {
     }
   }
 
-  const sortedTask = useMemo(() => {
+  const filteredAndSortedTasks = useMemo(() => {
 
-    return [...tasks].sort((a, b) => {
-      let comparison;
-      if (sortBy === 'title') {
-        comparison = a.title.localeCompare(b.title)
-      } else if (sortBy === 'status') {
-        const statusOptions = ["To do", "Doing", "Done"];
-        comparison = statusOptions.indexOf(a.status) - statusOptions.indexOf(b.status)
-      }
-      else if (sortBy === 'createdAt') {
-        const dateA = new Date(a.createdAt).getTime();
-        const dateB = new Date(b.createdAt).getTime();
-        comparison = dateA - dateB
-      }
-      return comparison * sortOrder
-    });
+    return [...tasks]
+      .filter(t => t.title.toLowerCase().includes(searchQuery.toLowerCase()))
+      .sort((a, b) => {
+        let comparison;
+        if (sortBy === 'title') {
+          comparison = a.title.localeCompare(b.title)
+        } else if (sortBy === 'status') {
+          const statusOptions = ["To do", "Doing", "Done"];
+          comparison = statusOptions.indexOf(a.status) - statusOptions.indexOf(b.status)
+        }
+        else if (sortBy === 'createdAt') {
+          const dateA = new Date(a.createdAt).getTime();
+          const dateB = new Date(b.createdAt).getTime();
+          comparison = dateA - dateB
+        }
+        return comparison * sortOrder
+      });
 
-  }, [tasks, sortBy, sortOrder]);
+  }, [tasks, sortBy, sortOrder, searchQuery]);
 
 
   return (
     <div>
       <h1>Questa Pagina mostra la lista delle task</h1>
+
+      <input
+        type="text"
+        placeholder='Cerca Task'
+        onChange={e => debounceSearch(e.target.value)}
+      />
+
       <table>
         <thead>
           <tr>
@@ -56,7 +82,7 @@ const TaskList = () => {
           </tr>
         </thead>
         <tbody>
-          {sortedTask.map(task => (
+          {filteredAndSortedTasks.map(task => (
             <TaskRow key={task.id} task={task} />
           ))}
         </tbody>
